@@ -6,56 +6,60 @@ window.addEventListener("load", function() {
    let copilot = document.querySelector("input[name=copilotName]");
    let fuel = document.querySelector("input[name=fuelLevel]");
    let cargo = document.querySelector("input[name=cargoMass]");
-   let inputs = document.getElementById("faultyItems");
+   let faultyItems = document.getElementById("faultyItems");
    let launch = document.getElementById("launchStatus");
    let pilotStatus = document.getElementById("pilotStatus"); 
-   let copilotStatus = document.getElementById("copilotStatus"); 
+   let copilotStatus = document.getElementById("copilotStatus");
+   let fuelStatus = document.getElementById("fuelStatus");
+   let cargoStatus = document.getElementById("cargoStatus"); 
    form.addEventListener("submit", function(event) {
       event.preventDefault(); 
       if (pilot.value === "" || copilot.value === "" || fuel.value === "" || cargo.value === ""){
          alert("All fields are required!");
       } else if (isNaN(pilot.value) === false || isNaN(copilot.value) === false || isNaN(fuel.value) === true || isNaN(cargo.value) === true) {
          alert("Make sure to enter valid information for each field!");
-      } 
-   let pilotName = `${pilotStatus} is ready for launch!`;
-   let copilotName = `${copilotStatus} is ready for launch!`;
-   form.addEventListener("submit", function(event) {
-      event.preventDefault();
-      if (inputs.fuelStatus < 10000) {
-         inputs.style.visibility = "visible";
-         launch = "Shuttle not ready for launch";
-         launch.style.color = "red";
-         alert("There isn't enough fuel for the journey!") 
-      } else if (inputs.cargoMass > 10000) {
-         inputs.style.visibility = "visible";
-         launch = "Shuttle not ready for launch";
-         launch.style.color = "red";
-         alert("There is too much mass for the shuttle to take off!") 
       } else {
-         launch = "Shuttle is ready for launch";
-         launch.style.color = "green";
+         faultyItems.style.visibility = "visible"; 
+         pilotStatus.innerHTML = `Pilot ${pilot.value} is ready for launch!`;
+         copilotStatus.innerHTML = `Co-pilot ${copilot.value} is ready for launch!`;
+         if (fuel.value < 10000) {
+            faultyItems.style.visibility = "visible";
+            launch.innerHTML = "Shuttle Not Ready for Launch";
+            launch.style.color = "red";
+            fuelStatus.innerHTML = `Fuel level is too low for launch`;
+         } else if (cargo.value > 10000) {
+            faultyItems.style.visibility = "visible";
+            launch.innerHTML = "Shuttle Not Ready for Launch";
+            launch.style.color = "red";
+            cargoStatus.innerHTML = `Cargo mass is too high for launch`;
+         } else {
+            faultyItems.style.visibility = "hidden"; 
+            launch.innerHTML = "Shuttle Is Ready for Launch!";
+            launch.style.color = "green";
+         }
       }
    });
-   }); 
+
+   
 // Fetching Planetary Data 
    fetch("https://handlers.education.launchcode.org/static/planets.json").then(function(response) {
       response.json().then(function(json){
          const div = document.getElementById("missionTarget");
-         for (let i = 0; i < json.length; i++) {
-            div.innerHTML += `
+         {  let data = json[2]; 
+            div.innerHTML = `
             <h2>Mission Destination</h2>
                <ol>
-                  <li>Name: ${json[i].name}</li>
-                  <li>Diameter: ${json[i].diameter}</li>
-                  <li>Star: ${json[i].star}</li>
-                  <li>Distance from Earth: ${json[i].distance}</li>
-                  <li>Number of Moons: ${json[i].moons}</li>
+                  <li>Name: ${data.name}</li>
+                  <li>Diameter: ${data.diameter}</li>
+                  <li>Star: ${data.star}</li>
+                  <li>Distance from Earth: ${data.distance}</li>
+                  <li>Number of Moons: ${data.moons}</li>
                </ol>
-            <img src="${json[i].picture}"> `
+            <img src="${data.image}">`
          }
       })
-   })
-});
+   });
+}); 
 
 /* This block of code shows how to format the HTML once you fetch some planetary JSON!
 <h2>Mission Destination</h2>
